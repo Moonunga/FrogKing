@@ -69,6 +69,8 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.fall;
         }
 
+
+
         animator.SetInteger("state", (int)state);
 
     }
