@@ -17,6 +17,10 @@ public class PlayerMovement : MonoBehaviour
 
     private enum MovementState { idle, run, jump, fall }
 
+    //------ get hit
+    [SerializeField] private float gethitForce;
+    bool isgethit;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -38,8 +42,72 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpforce);
         }
 
+
         UpdateAnimation();
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Trap"))
+        {
+            GetHit(collision.transform.position);
+            rb.velocity = new Vector2( rb.velocity.x, jumpforce);
+
+        }
+    }
+
+    private void GetHit(Vector2 pos)
+    {
+        if (!isgethit)
+        {
+            isgethit = true;
+            
+            float x = transform.position.x - pos.x;
+            if (x < 0)
+                x = 1;
+            else
+                x = -1;
+
+            StartCoroutine(HitRoutine());
+            StartCoroutine(Knockback(x));
+            StartCoroutine(alphablink());
+        }
+       
+    }
+
+    IEnumerator HitRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+        isgethit = false;
+    }
+
+    IEnumerator alphablink()
+    {
+        while (isgethit)
+        {
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.color = new Color(1, 1, 1, 0);
+            yield return new WaitForSeconds(0.1f);
+            spriteRenderer.color = new Color(1, 1, 1, 1);
+        }
+    }
+
+    IEnumerator Knockback(float dir)
+    {
+        float knockTime = 0;
+        while(knockTime<0.2f)
+        {
+            if (transform.rotation.y == 0)
+                transform.Translate(Vector2.left * 20 * Time.deltaTime * dir);
+            else
+                transform.Translate(Vector2.left * 20 * Time.deltaTime *-1f* dir);
+
+            knockTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+
 
     private void UpdateAnimation()
     {
@@ -69,6 +137,14 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.fall;
         }
 
+        if (isgethit)
+        {
+            animator.SetBool("get_hit", true);
+        }
+        else
+        {
+            animator.SetBool("get_hit", false);
+        }
 
 
         animator.SetInteger("state", (int)state);
