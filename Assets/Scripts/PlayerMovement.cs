@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     private enum MovementState { idle, run, jump, fall }
 
-    //------ get hit
+    //--- Get hit--------
     [SerializeField] private float gethitForce;
     bool isgethit;
 
@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator HitRoutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.7f);
         isgethit = false;
     }
 
@@ -98,9 +98,9 @@ public class PlayerMovement : MonoBehaviour
         while(knockTime<0.2f)
         {
             if (transform.rotation.y == 0)
-                transform.Translate(Vector2.left * 20 * Time.deltaTime * dir);
+                transform.Translate(Vector2.left * gethitForce * Time.deltaTime * dir);
             else
-                transform.Translate(Vector2.left * 20 * Time.deltaTime *-1f* dir);
+                transform.Translate(Vector2.left * gethitForce * Time.deltaTime *-1f* dir);
 
             knockTime += Time.deltaTime;
             yield return null;

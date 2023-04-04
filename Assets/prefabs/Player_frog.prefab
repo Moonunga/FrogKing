@@ -152,6 +152,7 @@ MonoBehaviour:
     m_Bits: 64
   moveSpeed: 10
   jumpforce: 15
+  gethitForce: 35
 --- !u!95 &8392487876594592214
 Animator:
   serializedVersion: 4
