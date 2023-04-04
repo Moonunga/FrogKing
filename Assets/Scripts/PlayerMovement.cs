@@ -21,6 +21,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float gethitForce;
     bool isgethit;
 
+    //--------------double jump
+    [SerializeField] int jumpCount = 0;
+    bool isdoublejump = false;
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("doublejumpman"))
+        {
+            isdoublejump = true;
+        }
+    }
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -30,21 +42,28 @@ public class PlayerMovement : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+
+
     // Update is called once per frame
     private void Update()
     {
         dirX = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2 (dirX * moveSpeed, rb.velocity.y);
+        rb.velocity = new Vector2(dirX * moveSpeed, rb.velocity.y);
 
-        
-        if (Input.GetButtonDown("Jump") && IsGround())
+
+        if (Input.GetButtonDown("Jump") && (IsGround() || (jumpCount < 1 && isdoublejump) ) ) 
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpforce);
+            ++jumpCount;
+            if (IsGround())
+                jumpCount = 0;
         }
 
-
         UpdateAnimation();
+
     }
+
+ 
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
